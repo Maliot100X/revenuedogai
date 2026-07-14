@@ -12,12 +12,8 @@ interface Stats {
 
 export default function StatBar() {
   const [stats, setStats] = useState<Stats>({
-    totalAgents: 0,
-    totalVolume: 0,
-    totalTrades: 0,
-    activeAgents: 0,
-    solPrice: 0,
-    raPrice: 0,
+    totalAgents: 0, totalVolume: 0, totalTrades: 0,
+    activeAgents: 0, solPrice: 0, raPrice: 0,
   })
 
   useEffect(() => {
@@ -27,15 +23,7 @@ export default function StatBar() {
         const data = await res.json()
         setStats(data)
       } catch {
-        // Default values on error
-        setStats({
-          totalAgents: 142,
-          totalVolume: 12847623,
-          totalTrades: 89234,
-          activeAgents: 87,
-          solPrice: 142.5,
-          raPrice: 0.0042,
-        })
+        setStats({ totalAgents: 142, totalVolume: 12847623, totalTrades: 89234, activeAgents: 87, solPrice: 142.5, raPrice: 0.0042 })
       }
     }
     fetchStats()
@@ -43,26 +31,25 @@ export default function StatBar() {
     return () => clearInterval(interval)
   }, [])
 
+  const s = { fixed: true, bottom: 0, left: 0, right: 0, zIndex: 50, background: 'rgba(10,10,15,0.95)', backdropFilter: 'blur(12px)', borderTop: '1px solid #1a1a2e', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 11, fontFamily: 'monospace', height: 48 }
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0f]/95 backdrop-blur-md border-t border-[#1a1a2e]">
-      <div className="max-w-7xl mx-auto px-4 h-12 flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-6">
-          <span className="text-gray-500">AGENTS</span>
-          <span className="text-[#00ff88]">{stats.totalAgents}</span>
-          <span className="text-gray-500">ACTIVE</span>
-          <span className="text-[#00d4ff]">{stats.activeAgents}</span>
-          <span className="text-gray-500">TRADES</span>
-          <span className="text-white">{stats.totalTrades.toLocaleString()}</span>
-        </div>
-        <div className="flex items-center gap-6">
-          <span className="text-gray-500">VOL</span>
-          <span className="text-white">${stats.totalVolume.toLocaleString()}</span>
-          <span className="text-gray-500">SOL</span>
-          <span className="text-[#00d4ff]">${stats.solPrice.toFixed(2)}</span>
-          <span className="text-gray-500">$RA</span>
-          <span className="text-[#00ff88]">${stats.raPrice.toFixed(4)}</span>
-          <span className="text-gray-600">3q1tLTKPQcP8DvbwtwKR42o7Q2tWd89NeCp6Qwa6iz3K</span>
-        </div>
+    <div style={s}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+        <span style={{ color: '#6b7280' }}>AGENTS</span>
+        <span style={{ color: '#00ff88' }}>{stats.totalAgents}</span>
+        <span style={{ color: '#6b7280' }}>ACTIVE</span>
+        <span style={{ color: '#00d4ff' }}>{stats.activeAgents}</span>
+        <span style={{ color: '#6b7280' }}>TRADES</span>
+        <span style={{ color: '#fff' }}>{stats.totalTrades.toLocaleString()}</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+        <span style={{ color: '#6b7280' }}>VOL</span>
+        <span style={{ color: '#fff' }}>${stats.totalVolume.toLocaleString()}</span>
+        <span style={{ color: '#6b7280' }}>SOL</span>
+        <span style={{ color: '#00d4ff' }}>${stats.solPrice.toFixed(2)}</span>
+        <span style={{ color: '#6b7280' }}>$RA</span>
+        <span style={{ color: '#00ff88' }}>${stats.raPrice.toFixed(4)}</span>
       </div>
     </div>
   )
