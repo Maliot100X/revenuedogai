@@ -29,23 +29,8 @@ export default function AgentProfilePage({ params }: { params: { agentId: string
         const res = await fetch(`/api/agents/${params.agentId}`)
         const data = await res.json()
         setAgent(data)
-      } catch {
-        setAgent({
-          id: params.agentId,
-          name: 'Revenue Bot Alpha',
-          description: 'High-frequency trading bot with advanced market analysis powered by MiMo AI.',
-          strategy: 'Momentum-based trading with dynamic position sizing and risk management.',
-          status: 'active',
-          pnl_total: 5234.5,
-          pnl_24h: 234.5,
-          trade_count: 1247,
-          win_rate: 72.5,
-          sol_balance: 25.8,
-          wallet_address: '3q1tLTKPQcP8DvbwtwKR42o7Q2tWd89NeCp6Qwa6iz3K',
-          bounty_count: 15,
-          task_count: 8,
-          created_at: '2024-01-01T00:00:00Z',
-        })
+      } catch (e) {
+        console.error('Failed to fetch agent:', e)
       } finally {
         setLoading(false)
       }
@@ -53,79 +38,37 @@ export default function AgentProfilePage({ params }: { params: { agentId: string
     fetchAgent()
   }, [params.agentId])
 
-  if (loading) return <div className="max-w-4xl mx-auto px-4 py-16 text-center text-gray-400">Loading agent profile...</div>
-  if (!agent) return <div className="max-w-4xl mx-auto px-4 py-16 text-center text-gray-400">Agent not found</div>
+  if (loading) return <div style={{ padding: 60, textAlign: 'center', color: '#6b6b8a' }}>Loading...</div>
+  if (!agent) return <div style={{ padding: 60, textAlign: 'center', color: '#6b6b8a' }}>Agent not found</div>
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="glass-card p-8 mb-8">
-        <div className="flex items-start gap-6">
-          <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-[#00ff88] to-[#00d4ff] flex items-center justify-center text-black font-bold text-3xl">
-            {agent.name[0]}
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-white">{agent.name}</h1>
-              <span className={`px-2 py-0.5 rounded-full text-xs ${agent.status === 'active' ? 'bg-[#00ff88]/10 text-[#00ff88]' : 'bg-gray-500/10 text-gray-400'}`}>
-                {agent.status}
-              </span>
-            </div>
-            <p className="text-gray-400 text-sm mb-4">{agent.description}</p>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500">Wallet:</span>
-              <span className="font-mono text-xs text-[#00d4ff]">{agent.wallet_address.slice(0, 16)}...</span>
-              <CopyButton text={agent.wallet_address} />
-            </div>
-          </div>
+    <div style={{ padding: '40px 0' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
+        <div style={{ width: 64, height: 64, background: 'linear-gradient(135deg, #00ff88, #00d4ff)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, fontWeight: 900, color: '#000' }}>R</div>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800 }}>{agent.name}</h1>
+          <p style={{ color: '#6b6b8a', fontSize: 14 }}>{agent.description || 'No description'}</p>
         </div>
       </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <div className="glass-card p-4 text-center">
-          <div className="text-lg font-bold text-[#00ff88]">${agent.pnl_total.toFixed(2)}</div>
-          <div className="text-xs text-gray-500">Total PnL</div>
-        </div>
-        <div className="glass-card p-4 text-center">
-          <div className={`text-lg font-bold ${agent.pnl_24h >= 0 ? 'text-[#00ff88]' : 'text-red-400'}`}>${agent.pnl_24h.toFixed(2)}</div>
-          <div className="text-xs text-gray-500">24h PnL</div>
-        </div>
-        <div className="glass-card p-4 text-center">
-          <div className="text-lg font-bold text-[#00d4ff]">{agent.win_rate}%</div>
-          <div className="text-xs text-gray-500">Win Rate</div>
-        </div>
-        <div className="glass-card p-4 text-center">
-          <div className="text-lg font-bold text-white">{agent.trade_count}</div>
-          <div className="text-xs text-gray-500">Trades</div>
-        </div>
-        <div className="glass-card p-4 text-center">
-          <div className="text-lg font-bold text-white">{agent.sol_balance.toFixed(2)}</div>
-          <div className="text-xs text-gray-500">SOL Balance</div>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+        {[
+          { label: 'Status', value: agent.status, color: agent.status === 'active' ? '#00ff88' : '#ff4444' },
+          { label: 'Trades', value: agent.trade_count.toString() },
+          { label: 'Win Rate', value: `${(agent.win_rate * 100).toFixed(1)}%` },
+          { label: 'PnL Total', value: `${agent.pnl_total.toFixed(4)} SOL` },
+          { label: 'Balance', value: `${agent.sol_balance.toFixed(4)} SOL` },
+          { label: 'Created', value: new Date(agent.created_at).toLocaleDateString() },
+        ].map(item => (
+          <div key={item.label} style={{ padding: 16, background: '#0d0d1a', border: '1px solid #1e1e3a', borderRadius: 8 }}>
+            <div style={{ fontSize: 12, color: '#6b6b8a', marginBottom: 4 }}>{item.label}</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: item.color || '#e8e8f0' }}>{item.value}</div>
+          </div>
+        ))}
       </div>
-
-      {/* Strategy */}
-      {agent.strategy && (
-        <div className="glass-card p-6 mb-8">
-          <h2 className="text-lg font-semibold text-white mb-3">Trading Strategy</h2>
-          <p className="text-sm text-gray-400">{agent.strategy}</p>
-        </div>
-      )}
-
-      {/* Activity */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="glass-card p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Bounties Created</span>
-            <span className="text-sm font-medium text-white">{agent.bounty_count}</span>
-          </div>
-        </div>
-        <div className="glass-card p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Tasks Completed</span>
-            <span className="text-sm font-medium text-white">{agent.task_count}</span>
-          </div>
+      <div style={{ marginTop: 24, padding: 16, background: '#0d0d1a', border: '1px solid #1e1e3a', borderRadius: 8 }}>
+        <div style={{ fontSize: 12, color: '#6b6b8a', marginBottom: 4 }}>Wallet</div>
+        <div style={{ fontSize: 13, fontFamily: 'monospace', wordBreak: 'break-all' }}>
+          {agent.wallet_address} <CopyButton text={agent.wallet_address} />
         </div>
       </div>
     </div>
