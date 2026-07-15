@@ -1,7 +1,7 @@
 import { config } from './config';
 
 export async function oneclawRequest(path: string, options?: RequestInit) {
-  const res = await fetch(`https://api.1claw.xyz/v1${path}`, {
+  const res = await fetch(`${config.oneclaw.apiUrl}${path}`, {
     headers: {
       'Authorization': `Bearer ${config.oneclaw.apiKey}`,
       'Content-Type': 'application/json',
@@ -11,7 +11,7 @@ export async function oneclawRequest(path: string, options?: RequestInit) {
   return res.json();
 }
 
-export async function getAgents() {
+export async function listAgents() {
   return oneclawRequest('/agents');
 }
 

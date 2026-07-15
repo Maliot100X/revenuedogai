@@ -1,13 +1,14 @@
 import { config } from './config';
 
-const headers = {
-  'Authorization': `Bearer ${config.clawpump.apiKey}`,
-  'Content-Type': 'application/json',
-};
-
 export async function clawpumpRequest(path: string, options?: RequestInit) {
+  if (!config.clawpump.apiKey) {
+    return { error: 'ClawPump API key not configured. Get a cpk_* key from dev@clawpump.tech' };
+  }
   const res = await fetch(`${config.clawpump.apiUrl}${path}`, {
-    headers,
+    headers: {
+      'Authorization': `Bearer ${config.clawpump.apiKey}`,
+      'Content-Type': 'application/json',
+    },
     ...options,
   });
   return res.json();
@@ -15,10 +16,6 @@ export async function clawpumpRequest(path: string, options?: RequestInit) {
 
 export async function listAgents() {
   return clawpumpRequest('/agents');
-}
-
-export async function getAgent(id: string) {
-  return clawpumpRequest(`/agents/${id}`);
 }
 
 export async function createAgent(name: string, strategy?: string) {

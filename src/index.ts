@@ -1,5 +1,6 @@
 import { config } from './config';
-import { listAgents, createAgent, chatAgent } from './clawpump';
+import { listAgents as listOneclawAgents, getAgent as getOneclawAgent } from './oneclaw';
+import { listAgents as listClawpumpAgents, createAgent, chatAgent } from './clawpump';
 import { saveMemory, loadMemory } from './memlawb';
 import { getBalance } from './solana';
 
@@ -13,9 +14,18 @@ async function main() {
   console.log('');
 
   switch (command) {
-    case 'agents':
-      const agents = await listAgents();
-      console.log('Agents:', JSON.stringify(agents, null, 2));
+    case '1claw':
+      // 1Claw API (agent security)
+      console.log('1Claw API (Agent Security):');
+      const oneclawAgents = await listOneclawAgents();
+      console.log(JSON.stringify(oneclawAgents, null, 2));
+      break;
+
+    case 'clawpump':
+      // ClawPump API (agent lifecycle)
+      console.log('ClawPump API (Agent Lifecycle):');
+      const cpAgents = await listClawpumpAgents();
+      console.log(JSON.stringify(cpAgents, null, 2));
       break;
 
     case 'create':
@@ -51,11 +61,12 @@ async function main() {
 
     default:
       console.log('Commands:');
-      console.log('  agents                    List all agents');
-      console.log('  create <name> [strategy]  Create a new agent');
-      console.log('  chat <id> <message>       Chat with an agent');
-      console.log('  memory save/load ...      Manage agent memory');
-      console.log('  balance <address>         Check SOL balance');
+      console.log('  1claw                    List 1Claw agents');
+      console.log('  clawpump                 List ClawPump agents');
+      console.log('  create <name> [strategy] Create a new agent');
+      console.log('  chat <id> <message>      Chat with an agent');
+      console.log('  memory save/load ...     Manage agent memory');
+      console.log('  balance <address>        Check SOL balance');
   }
 }
 
