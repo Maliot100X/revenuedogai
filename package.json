@@ -9,8 +9,6 @@
     "dev": "ts-node src/index.ts"
   },
   "dependencies": {
-    "@clawpump/sdk": "^0.2.0",
-    "@gitlawb/memlawb": "^1.0.0",
     "@solana/web3.js": "^1.95.0",
     "dotenv": "^17.4.2"
   },
